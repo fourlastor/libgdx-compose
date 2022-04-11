@@ -1,31 +1,17 @@
 package com.jakewharton.mosaic
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ComposeNode
-import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.*
 
 @Composable
-fun Text(
-	value: String,
-	color: Color? = null,
-	background: Color? = null,
-	style: TextStyle? = null,
-) {
-	ComposeNode<TextNode, MosaicNodeApplier>(::TextNode) {
-		set(value) {
-			this.value = value
+fun Text(value: String, x: Float = 0f, y: Float = 0f) {
+	ComposeNode<TextNode, MosaicNodeApplier>(
+		factory = { TextNode() },
+		update =  {
+			set(value) { this.value = value }
+			set(x) { this.x = x }
+			set(y) { this.y = y }
 		}
-		set(color) {
-			this.foreground = color
-		}
-		set(background) {
-			this.background = background
-		}
-		set(style) {
-			this.style = style
-		}
-	}
+	)
 }
 
 @Immutable
@@ -108,11 +94,7 @@ fun Column(children: @Composable () -> Unit) {
 private fun Box(isRow: Boolean, children: @Composable () -> Unit) {
 	ComposeNode<BoxNode, MosaicNodeApplier>(
 		factory = ::BoxNode,
-		update = {
-			set(isRow) {
-				this.isRow = isRow
-			}
-		},
+		update = {},
 		content = children,
 	)
 }

@@ -3,8 +3,16 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPluginKt
 apply plugin: 'org.jetbrains.kotlin.jvm'
 apply plugin: 'com.vanniktech.maven.publish'
 
+
+ext {
+	gdxVersion = '1.10.0'
+}
+
 dependencies {
 	api project(':compose:runtime')
+	api "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
+	api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+	api "com.badlogicgames.gdx:gdx:$gdxVersion"
 	implementation deps.jansi
 
 	testImplementation deps.junit

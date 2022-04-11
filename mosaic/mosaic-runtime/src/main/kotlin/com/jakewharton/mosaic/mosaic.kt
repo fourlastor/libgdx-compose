@@ -5,28 +5,35 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Composition
 import androidx.compose.runtime.Recomposer
 import androidx.compose.runtime.snapshots.Snapshot
-import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.CoroutineScope
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration
+import kotlinx.coroutines.*
 import kotlinx.coroutines.CoroutineStart.UNDISPATCHED
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.yield
-
-/**
- * True when using ANSI control sequences to overwrite output.
- * False for a debug-like output that renders each "frame" on its own with a timestamp delta.
- */
-private const val ansiConsole = true
+import kotlinx.coroutines.channels.produce
+import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.first
 
 interface MosaicScope : CoroutineScope {
 	fun setContent(content: @Composable () -> Unit)
 }
 
+@ExperimentalCoroutinesApi
 fun runMosaic(body: suspend MosaicScope.() -> Unit) = runBlocking {
-	val output = if (ansiConsole) AnsiOutput else DebugOutput
+
+	val state = produce<ComposeApplication>(Dispatchers.Default) {
+		val config = Lwjgl3ApplicationConfiguration().apply {
+			setWindowedMode(800, 600)
+			setForegroundFPS(60)
+		}
+		Lwjgl3Application(
+			ComposeApplication {
+				channel.trySend(it)
+				channel.close()
+			}, config
+		)
+	}
+
+	val output = GdxOutput(state.consumeAsFlow().first())
 
 	var hasFrameWaiters = false
 	val clock = BroadcastFrameClock {
@@ -51,8 +58,8 @@ fun runMosaic(body: suspend MosaicScope.() -> Unit) = runBlocking {
 			if (hasFrameWaiters) {
 				hasFrameWaiters = false
 				clock.sendFrame(0L) // Frame time value is not used by Compose runtime.
+				output.display(rootNode)
 
-				output.display(rootNode.render())
 				displaySignal?.complete(Unit)
 			}
 			delay(50)

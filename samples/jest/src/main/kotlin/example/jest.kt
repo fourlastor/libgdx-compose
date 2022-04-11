@@ -9,14 +9,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import com.jakewharton.mosaic.Color.Companion.Black
 import com.jakewharton.mosaic.Color.Companion.Green
 import com.jakewharton.mosaic.Color.Companion.Red
 import com.jakewharton.mosaic.Color.Companion.Yellow
 import com.jakewharton.mosaic.Column
 import com.jakewharton.mosaic.Row
 import com.jakewharton.mosaic.Text
-import com.jakewharton.mosaic.TextStyle.Companion.Bold
 import com.jakewharton.mosaic.runMosaic
 import example.TestState.Fail
 import example.TestState.Pass
@@ -95,12 +93,12 @@ fun TestRow(test: Test) {
 			Pass -> " PASS "
 			Fail -> " FAIL "
 		}
-		Text(state, color = Black, background = bg)
+		Text(state)
 
 		val dir = test.path.substringBeforeLast('/')
 		val name = test.path.substringAfterLast('/')
 		Text(" $dir/")
-		Text(name, style = Bold)
+		Text(name)
 	}
 }
 
@@ -111,13 +109,13 @@ private fun Summary(tests: SnapshotStateList<Test>) {
 
 		val failed = tests.count { it.state == Fail }
 		if (failed > 0) {
-			Text("$failed failed", color = Red)
+			Text("$failed failed")
 			Text(", ")
 		}
 
 		val passed = tests.count { it.state == Pass }
 		if (passed > 0) {
-			Text("$passed passed", color = Green)
+			Text("$passed passed")
 			Text(", ")
 		}
 
