@@ -5,6 +5,8 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.utils.ScreenUtils
+import kotlinx.coroutines.runBlocking
+import ktx.async.KtxAsync
 
 
 class ComposeApplication(
@@ -26,12 +28,15 @@ class ComposeApplication(
 		batch = SpriteBatch()
 		font = BitmapFont()
 		font.color = com.badlogic.gdx.graphics.Color.RED
+		KtxAsync.initiate()
 		onAppReady(this)
 	}
 
 	override fun dispose() {
-		batch.dispose()
-		font.dispose()
+		runBlocking(KtxAsync.coroutineContext) {
+			batch.dispose()
+			font.dispose()
+		}
 	}
 
 	override fun render() {

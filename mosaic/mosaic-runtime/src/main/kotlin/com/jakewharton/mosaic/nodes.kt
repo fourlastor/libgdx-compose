@@ -8,12 +8,7 @@ internal sealed class MosaicNode {
 	abstract fun draw(batch: Batch)
 }
 
-internal class TextNode(initialValue: String = "") : MosaicNode() {
-	private val font by lazy {
-		BitmapFont().apply {
-			color = com.badlogic.gdx.graphics.Color.RED
-		}
-	}
+internal class TextNode(private val font: BitmapFont, initialValue: String = "") : MosaicNode() {
 
 	var value: String = initialValue
 	var x: Float = 0f
