@@ -5,18 +5,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.jakewharton.mosaic.Text
 import com.jakewharton.mosaic.runMosaic
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 
+@OptIn(ExperimentalCoroutinesApi::class)
 fun main() = runMosaic {
-	// TODO https://github.com/JakeWharton/mosaic/issues/3
-	var count by mutableStateOf(0)
+	var count: Int by mutableStateOf(0)
 
 	setContent {
-		Text("The count is: $count")
+		Text("First: $count", x = 200f, y = 200f)
+		Text("Second: $count", x = 200f, y = 200f + 10f * count)
 	}
 
 	for (i in 1..20) {
-		delay(250)
+		delay(500)
 		count = i
 	}
 }
